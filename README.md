@@ -3,7 +3,7 @@ Trong mảng IaC thì tool mà thông dụng nhất ở thời điểm hiện t�
 
 Flow của terraform sẽ như sau: viết code,gõ lệnh CLI, và đợi nó cung cấp infrastructure, sau khi nó tạo xong thì nó sẽ tạo ra một file state để lưu lại kiến trúc hạ tầng hiện tại.
 
-![](/bai1/flow.PNG)
+![](/bai1/images/flow.PNG)
 
 Cũng có nhiều tool khác có thể làm được việc này như là Ansible chẳng hạn, nhưng Ansible là một Configuration Management tool chứ không phải được tạo ra để tập trung cho mảng IaC, nên dùng nó thì sẽ tốn công chạy những thứ không cần thiết
 
@@ -11,7 +11,7 @@ Cũng có nhiều tool khác có thể làm được việc này như là Ansibl
 
 Để triển khai một ứng dụng thì có thể làm theo flow sau đây, dùng Terraform để tạo hạ tầng, sau đó dùng Ansible để setup những thứ cần thiết cho server, như install docker chẳng hạn, setup CI tool trên server. Sau đó thì dùng docker hoặc kubernetes để chạy ứng dụng.
 
-![](/bai1/terraform.PNG)
+![](/bai1/images/terraform.PNG)
 
 # 2. Ưu điểm khi dùng terraform
 
@@ -34,7 +34,7 @@ https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli>
 https://developer.hashicorp.com/terraform/downloads>
 
 # Tạo EC2 bằng Terraform
-Ngôn ngữ Terraform sử dụng gọi là HashiCorp Configuration Language (HCL).
+> Ngôn ngữ Terraform sử dụng gọi là HashiCorp Configuration Language (HCL).
 Các bước ta thực hiện như sau:
 
 1. Viết terraform file.
@@ -45,7 +45,7 @@ Các bước ta thực hiện như sau:
 
 ![](./bai1/workflow1.PNG)
 
-> Tạo file *main.tf*
+> Tạo file *main.tf* với nội dung sau
 
 ```
 provider "aws" {
@@ -63,6 +63,6 @@ resource "aws_instance" "bai1" {
 * Để xem thuộc tính của 1 resource nào đó thì truy cập vào trang
  <https://registry.terraform.io/> để xem
 
-![](./bai1/awsresource.PNG)
-![](./bai1/awsresource-doc.PNG)
-![](./bai1/awsresource-doc-instance.PNG)
+![](./bai1/images/awsresource.PNG)
+![](./bai1/images/awsresource-doc.PNG)
+![](./bai1/images/awsresource-doc-instance.PNG)
