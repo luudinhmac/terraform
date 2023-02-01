@@ -33,36 +33,7 @@ Sau đó nhập accesskey và secretkey của AWS của tài khoản đã tạo 
 https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli>
 https://developer.hashicorp.com/terraform/downloads>
 
-# Tạo EC2 bằng Terraform
-> Ngôn ngữ Terraform sử dụng gọi là HashiCorp Configuration Language (HCL).
-Các bước ta thực hiện như sau:
 
-1. Viết terraform file.
-2. Cấu hình AWS provider.
-3. Khỏi tạo Terraform bằng câu lệnh *terraform init*
-4. Triển khai EC2 instance bằng câu lệnh *terraform apply*
-5. Xóa EC2 bằng câu lệnh *terraform destroy*
 
-![](./bai1/workflow1.PNG)
 
-> Tạo file *main.tf* với nội dung sau
 
-```
-provider "aws" {
-  region = "us-east-2"
-}
-resource "aws_instance" "bai1" {
-  ami           = "ami-05bfbece1ed5beb54"
-  instance_type = "t2.micro"
-  tags = {
-    "Name" = "Bai1"
-  }
-}
-```
-
-* Để xem thuộc tính của 1 resource nào đó thì truy cập vào trang
- <https://registry.terraform.io/> để xem
-
-![](./bai1/images/awsresource.PNG)
-![](./bai1/images/awsresource-doc.PNG)
-![](./bai1/images/awsresource-doc-instance.PNG)
