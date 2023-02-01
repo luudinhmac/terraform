@@ -25,8 +25,7 @@ Yêu cầu:
 - Có tài khoản AWS
 - Tạo IAM user, cấp quyền addmin permission, lấy access key và config vào máy.
 
-``` 
-aws config
+``` aws config
 ```
 # Cài terraform CLI.
 https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli>
