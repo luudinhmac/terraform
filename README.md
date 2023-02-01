@@ -1,4 +1,4 @@
-# Terraform
+# 1. Terraform
 Trong mảng IaC thì tool mà thông dụng nhất ở thời điểm hiện tại chắc có lẽ là Terraform. Terraform là một open-source của HashiCorp, chuyên dùng để provisioning infrastructure, ta chỉ việc viết code, rồi gõ một vài câu CLI đơn giản, nó sẽ tạo ra Infrastructure cho ta, thay vì ta với lên web console bấm rất tốn thời gian.
 
 Flow của terraform sẽ như sau: viết code,gõ lệnh CLI, và đợi nó cung cấp infrastructure, sau khi nó tạo xong thì nó sẽ tạo ra một file state để lưu lại kiến trúc hạ tầng hiện tại.
@@ -13,22 +13,32 @@ Cũng có nhiều tool khác có thể làm được việc này như là Ansibl
 
 ![](/bai1/terraform.PNG)
 
-# Ưu điểm khi dùng terraform
+# 2. Ưu điểm khi dùng terraform
 
-- Dễ xài
+- Dễ sử dụng
 - Open source và miễn phí
-- Declartive programing: chỉ diễn tả những thứ bạn cần và Teraform làm cho bạn.
+- Declartive programing: chỉ diễn tả những thứ cần thiết và Teraform làm cho bạn.
 - Có thể cung cấp hạ tầng cho nhiều cloud khác nhau như AWS, GCP, Azure trong cùng một file cấu hình, này gọi là Cloud-agnostic
 
 Yêu cầu:
-
 - Có tài khoản AWS
 - Tạo IAM user, cấp quyền addmin permission, lấy access key và config vào máy.
 
+Trên máy tính mở Terminal và gõ lệnh sau
 ``` 
 aws config
 ```
-# Cài terraform CLI.
+Sau đó nhập accesskey và secretkey của AWS của tài khoản đã tạo vào máy.
+# 3. Cài terraform CLI.
 https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli>
 https://developer.hashicorp.com/terraform/downloads>
 
+# Tạo EC2 bằng Terraform
+Ngôn ngữ Terraform sử dụng gọi là HashiCorp Configuration Language (HCL).
+Các bước ta thực hiện như sau:
+
+1. Viết terraform file.
+2. Cấu hình AWS provider.
+3. Khỏi tạo Terraform bằng câu lệnh *terraform init*
+4. Triển khai EC2 instance bằng câu lệnh *terraform apply*
+5. Xóa EC2 bằng câu lệnh *terraform destroy*
