@@ -1,7 +1,9 @@
-#Life cycle của một resource trong Terraform
+# Life cycle của một resource trong Terraform
 ## Cách khởi tạo source code để viết config file và vòng đời của 1 resource trong Terraform.
 * Để tạo provisioning infrastructure mới 
 => Tạo workspace => viết config file => Khởi tạo workspace với *terraform init* => Kiểm tra resource nào được tạo với *terraform plan* => Tạo resource bằng *terraform apply*
+![](./images/provisioning_iac.PNG)
+
 * Provisioning infrastructure
 ** Tạo workspace và viết config
 > Tạo workspace đơn giản(folder), tạo 1 file main.tf
@@ -242,5 +244,107 @@ Khi chạy xong sẽ thấy có một file mới được tạo ra là terraform
           "attributes": {
             "ami": "ami-05bfbece1ed5beb54",
             ...
+}
+```
+
+Để xóa resource thì chạy lệnh *terraform destroy*, khi chạy thì nó cũng sẽ chạy câu lệnh plan trước để liệt kê ra những resource mà nó sẽ xóa, và hỏi  có muốn xóa hay không. Sau khi terraform nó chạy xong, mở file terraform.tfstate lên thì bây giờ trường resources trong file này sẽ là rỗng.
+
+```
+{
+  "version": 4,
+  "terraform_version": "1.0.0",
+  "serial": 3,
+  "lineage": "fa28c290-92d6-987f-c49d-bc546b296abd",
+  "outputs": {},
+  "resources": []
+}
+```
+
+### Ở trên là các bước cần thực hiện để tạo một infrastructure mới. Và bên cạnh việc sử dụng resource block để tạo resource, thì terraform có cung cấp cho một block khác dùng để queries và tìm kiếm data trên AWS, block này sẽ giúp tạo resource một cách linh hoạt hơn là phải điền giá trị cố định của resource. Ví dụ như ở trên thì trường ami của EC2 fix giá trị là ami-05bfbece1ed5beb54, để biết được giá trị này thì phải lên AWS để kiếm, với lại nếu dùng giá trị này thì người khác đọc cũng không biết được giá trị này là thuộc ami loại gì
+## Data block
+
+> Terraform cung cấp một block tên là data, được dùng để gọi API lên infrastructure thông qua provider và lấy thông tin về một resource nào đó, block này nó sẽ không thực hiện hành động tạo resource trên infrastructure. Ví dụ: file main.tf trên như sau:
+```
+provider "aws" {
+  region = "us-west-2"
+}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  owners = ["746186632829"] # Canonical Ubuntu AWS account id
+}
+
+resource "aws_instance" "hello" {
+  ami           = data.aws_ami.ubuntu.id # Change here, reference to result of data block instead of fix value
+  instance_type = "t2.micro"
+  tags = {
+    Name = "HelloWorld"
+  }
+}
+```
+
+Ở file trên, dùng data block để gọi API tới AWS Cloud và lấy thông tin về ami (Amazon Machine Images), sau đó ở dưới resource block thay đổi lại trường ami bằng giá trị id lấy được từ data block ở trên ra. Syntax của data block.
+
+![](./images/syntax_data_block.PNG)
+
+Khi chạy câu lệnh plan, sẽ thấy ở dòng Plan gần cuối nó vẫn chỉ hiển thị chỉ 1 resource sẽ được thêm, do data block không tạo ra resource, bên cạnh đó thì ở trường ami nó sẽ in ra giá trị lấy được từ data block.
+
+```
+$ terraform plan
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the
+following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_instance.hello will be created
+  + resource "aws_instance" "hello" {
+      + ami                                  = "ami-05bfbece1ed5beb54"
+      ...
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you
+run "terraform apply" now.
+```
+
+![](./images/data_block.PNG)
+
+# Life cycle
+
+> Sau khi làm qua ví dụ ở trên, Terraform là một công cụ để quản lý state thông qua file terraform.tfstate và thực hiện hành động CRUD lên các resource của một infrastructure nào đó, thông thường thì những resource của ta sẽ là cloud-based resources, nhưng terraform không giới hạn ở cloud mà là tất cả những resource nào mà có thể thực hiện CRUD lên nó, đều có thể quản lý thông qua terraform. Ở phần này thì sẽ dùng terraform để tạo một S3 (AWS Simple Cloud Storage) trên AWS để tìm hiểu về vòng đời của một resource
+
+![](./images/lifecycle_s3.PNG)
+## Life cycle function hooks
+Tất cả các resource type của terraform đều implement một CRUD interface, trong CRUD interface này sẽ có các function hooks là Create(), Read(), Update(), Delete() và function này sẽ được thực thi nếu gặp đúng điều kiện phù hợp.
+
+Còn data type thì nó implement một Read interface chỉ có một function hooks là Read().
+
+![](./images/lifecycle_fuction_hook.PNG)
+
+Create() sẽ được gọi trong quá trình tạo resource, Read() được gọi trong quá trình plan, Update() được gọi trong quá trình cập nhật resource, và Delete() được gọi trong quá trình xóa resource.
+
+## Ví dụ về S3 resource
+
+```
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_s3_bucket" "terraform-bucket" {
+  bucket = "terraform-series-bucket"
+
+  tags = {
+    Name        = "Terraform Series"
+  }
 }
 ```
