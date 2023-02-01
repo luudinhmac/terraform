@@ -29,7 +29,7 @@ Trên máy tính mở Terminal và gõ lệnh sau
 aws config
 ```
 Sau đó nhập accesskey và secretkey của AWS của tài khoản đã tạo vào máy.
-# 3. Cài terraform CLI.
+## Cài terraform CLI.
 https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli>
 https://developer.hashicorp.com/terraform/downloads>
 
@@ -42,3 +42,27 @@ Các bước ta thực hiện như sau:
 3. Khỏi tạo Terraform bằng câu lệnh *terraform init*
 4. Triển khai EC2 instance bằng câu lệnh *terraform apply*
 5. Xóa EC2 bằng câu lệnh *terraform destroy*
+
+![](./bai1/workflow1.PNG)
+
+> Tạo file *main.tf*
+
+```
+provider "aws" {
+  region = "us-east-2"
+}
+resource "aws_instance" "bai1" {
+  ami           = "ami-05bfbece1ed5beb54"
+  instance_type = "t2.micro"
+  tags = {
+    "Name" = "Bai1"
+  }
+}
+```
+
+* Để xem thuộc tính của 1 resource nào đó thì truy cập vào trang
+ <https://registry.terraform.io/> để xem
+
+![](./bai1/awsresource.PNG)
+![](./bai1/awsresource-doc.PNG)
+![](./bai1/awsresource-doc-instance.PNG)
