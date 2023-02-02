@@ -1,4 +1,7 @@
-bai1/.terraform.lock.hcl
-bai1/.terraform/providers/registry.terraform.io/hashicorp/aws/4.52.0/linux_amd64
-bai2/S3/.terraform
-bai2/S3/.terraform.lock.hcl
+# bai1/.terraform.lock.hcl
+# bai1/.terraform/providers/registry.terraform.io/hashicorp/aws/4.52.0/linux_amd64
+# bai2/S3/.terraform
+# bai2/S3/.terraform.lock.hcl
+# bai3_terraform_function_programing/EC2/.terraform.lock.hcl
+# bai3_terraform_function_programing/EC2/.terraform
+.terraform*
