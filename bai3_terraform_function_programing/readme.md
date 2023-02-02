@@ -43,10 +43,10 @@ Thuộc tính là type để chỉ định kiểu dữ liệu của biến đó,
 * Basic Type: string, number, bool
 * Complex Type: list(), set(), map(), object(), tuple()
 > Trong Terraform, kiểu dữ liệu number và bool sẽ được chuyển thành kiểu dữ liệu string khi cần thiết. Nghĩa là 1 sẽ thành "1", true sẽ thành "true".
-Ta dùng cú pháp var.<VARIABLE_NAME> để truy cập được giá trị của biến, cập nhật lại tệp tin main.tf.
+Ta dùng cú pháp *var.<VARIABLE_NAME>* để truy cập được giá trị của biến, cập nhật lại tệp tin main.tf.
 ```
 provider "aws" {
-  region = "us-uest-2"
+  region = "us-east-2"
 }
 
 data "aws_ami" "ubuntu" {
@@ -65,13 +65,13 @@ resource "aws_instance" "hello" {
   instance_type = var.instance_type # change here
 }
 ```
-Ở thuộc tính instance_type thay vì gán cứng thì bây giờ ta sẽ dùng biến var.instance_type
+Ở thuộc tính *instance_type* thay vì gán mặc đinh thì bây giờ sẽ dùng biến *var.instance_type*
 ## Gán giá trị cho variable
-Để gán giá trị cho biến, tạo file terraform.tfvars
+Để gán giá trị cho biến, tạo file *terraform.tfvars*
 ```
 instance_type = "t2.micro"
 ```
-Khi chạy terraform apply thì tệp tin terraform.tfvars sẽ được Terraform sử dụng để tải giá trị mặc định cho biến, nếu không muốn dùng mặc định,  thì khi chạy lệnh apply thêm vào thuộc tính -var-file. Tạo một tệp tin tên là production.tfvars
+Khi chạy terraform apply thì tệp tin terraform.tfvars sẽ được Terraform sử dụng để tải giá trị mặc định cho biến, nếu không muốn dùng mặc định,  thì khi chạy lệnh apply thêm vào thuộc tính *-var-file*. Tạo một tệp tin tên là*production.tfvars*
 ```
 instance_type = "t3.small"
 ```
@@ -91,11 +91,11 @@ variable "instance_type" {
   }
 }
 ```
-Ở tệp tin trên dùng hàm contains để kiểm tra giá trị của biến instance_type này chỉ được nằm trong mảng cho phép, nếu không thì khi chạy câu lệnh apply sẽ thấy lỗi ở trường error_message. Sửa lại tệp tin terraform.tfvars
+Ở tệp tin trên dùng hàm contains để kiểm tra giá trị của biến *instance_type* này chỉ được nằm trong mảng cho phép, nếu không thì khi chạy câu lệnh apply sẽ thấy lỗi ở trường error_message. Sửa lại tệp tin*terraform.tfvars*
 > instance_type = "t3.micro"
 Chạy apply
 > terraform apply
-> ╷
+```
 │ Error: Invalid value for variable
 │
 │   on variable.tf line 1:
@@ -104,7 +104,7 @@ Chạy apply
 │ Value not allow.
 │
 │ This was checked by the validation rule at variable.tf:5,3-13.
-
+```
 Sử dụng validating để kiểm soát giá trị của biến mà mình muốn.  
 
 ## Output
@@ -195,12 +195,13 @@ output "ec2" {
   }
 }
 ```
-Ở phần output, để truy cập được resource thì dùng dấu [] và giá trị Index của resource. Bình thường để truy cập được resource dùng theo cú pháp <RESOURCE TYPE>.<NAME>, nhưng khi dùng count thì sẽ truy cập resource theo cú pháp <RESOURCE TYPE>.<NAME>[index].
+Ở phần output, để truy cập được resource thì dùng dấu [] và giá trị Index của resource. Bình thường để truy cập được resource dùng theo cú pháp /<RESOURCE TYPE>./<NAME>, nhưng khi dùng count thì sẽ truy cập resource theo cú pháp /<RESOURCE TYPE>./<NAME>[index].
 
 ## For expressions
 For cho phép duyệt qua một danh sách, cú pháp của lệnh for:
 
-> for <value> in <list> : <return value>
+> for /<value> in /<list> : /<return value>
+
 Ví dụ dùng for:
 
 * Tạo ra một mảng mới với giá trị của mảng mới sẽ được viết hoa: [for s in var.words : upper(s)]
@@ -214,7 +215,7 @@ output "ec2" {
   }
 }
 ```
-Phần output trên sẽ in ra giá trị public_ip là một mảng IP của tất cả EC2 được tạo ra. Còn nếu muốn in output ra theo kiểu { public_ip1: <value>, public_ip2: <value> } thì có thể dùng hàm format.
+Phần output trên sẽ in ra giá trị public_ip là một mảng IP của tất cả EC2 được tạo ra. Còn nếu muốn in output ra theo kiểu { public_ip1: /<value>, public_ip2: /<value> } thì có thể dùng hàm format.
 ## Format function
 
 ```
@@ -222,7 +223,7 @@ output "ec2" {
   value = { for i, j in aws_instance.hello : format("public_ip%d", i + 1) => j.public_ip }
 }
 ```
-> Chạy *terraform* plan để kiểm tra ta sẽ thấy output lúc này sẽ là dạng { public_ip1: <value>, public_ip2: <value> }.
+> Chạy *terraform* plan để kiểm tra ta sẽ thấy output lúc này sẽ là dạng { public_ip1: /<value>, public_ip2: /<value> }.
 
 ```
 ...
@@ -301,7 +302,7 @@ Chạy *terraform init* và *terraform apply*, sẽ thấy S3 Bucket của ta tr
 
 
 ## File function
-Hàm file sẽ giúp ta tải nội dung của một tệp tin nào đó vào bên trong Terraform. Tạo một tệp tin tên là s3_static_policy.json và sao chép đoạn JSON trên vào.
+Hàm file sẽ giúp ta tải nội dung của một tệp tin nào đó vào bên trong Terraform. Tạo một tệp tin tên là *s3_static_policy.json* và sao chép đoạn JSON trên vào.
 ```
 {
   "Version": "2012-10-17",
@@ -314,7 +315,7 @@ Hàm file sẽ giúp ta tải nội dung của một tệp tin nào đó vào b�
         "s3:GetObject"
       ],
       "Resource": [
-        "arn:aws:s3:::terraform-series-bai3/*"
+        "arn:aws:s3:::terraform-series-bai3-20230202/*"
       ]
     }
   ]
@@ -365,7 +366,7 @@ resource "aws_s3_bucket_policy" "static" {
   policy = file("s3_static_policy.json")
 }
 ```
-Khi ta dùng S3 ở chế độ Static Website, thì URL của trang web của ta sẽ có định dạng <http://<bucket-name>.s3-website-<region>.amazonaws.com>.
+Khi ta dùng S3 ở chế độ Static Website, thì URL của trang web của ta sẽ có định dạng *<http://<bucket-name>.s3-website-<region>.amazonaws.com>*.
 
 Tiếp theo tải tệp tin lên S3 Bucket để hosting trang web của ta. Tải source code ở đây ![Static Web](https://github.com/hoalongnatsu/static-web), sau khi tải xong thì nhớ xóa tệp .git đi.
 
@@ -476,6 +477,6 @@ locals {
   flag = true
 }
 ```
-Để truy cập giá trị local thì dùng cú pháp local.<KEY>, ví dụ:
+Để truy cập giá trị local thì dùng cú pháp *local.<KEY>*, ví dụ:
 
 local.one
