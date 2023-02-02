@@ -195,12 +195,12 @@ output "ec2" {
   }
 }
 ```
-Ở phần output, để truy cập được resource thì dùng dấu [] và giá trị Index của resource. Bình thường để truy cập được resource dùng theo cú pháp /<RESOURCE TYPE>./<NAME>, nhưng khi dùng count thì sẽ truy cập resource theo cú pháp /<RESOURCE TYPE>./<NAME>[index].
+Ở phần output, để truy cập được resource thì dùng dấu [] và giá trị Index của resource. Bình thường để truy cập được resource dùng theo cú pháp \<RESOURCE TYPE>.\<NAME>, nhưng khi dùng count thì sẽ truy cập resource theo cú pháp \<RESOURCE TYPE>.\<NAME>[index].
 
 ## For expressions
 For cho phép duyệt qua một danh sách, cú pháp của lệnh for:
 
-> for /<value> in /<list> : /<return value>
+> for \<value> in \<list> : \<return value>
 
 Ví dụ dùng for:
 
