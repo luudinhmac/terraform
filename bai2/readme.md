@@ -337,14 +337,32 @@ Create() sẽ được gọi trong quá trình tạo resource, Read() được g
 
 ```
 provider "aws" {
-  region = "us-west-2"
+  region = "us-east-2"
 }
 
 resource "aws_s3_bucket" "terraform-bucket" {
-  bucket = "terraform-series-bucket"
+  bucket = "terraform-bucket-2023-01-02"
 
   tags = {
-    Name        = "Terraform Series"
+    Name = "Terraform Series"
   }
 }
+
 ```
+### Plan
+
+Bên cạnh việc hiển thị những resource nào sẽ được tạo ra, thì nếu đã có resource rồi mà thay đổi giá trị gì trong file terraform, thì plan sẽ hiển thị cho là resource nào sẽ được cập nhật lại dựa theo state của resource trước đó đã được tạo ra.
+
+Và nếu ta không thay đổi gì trong file terraform, thì khi chạy plan thì nó sẽ hiển thị là không có resource nào được thêm vào hoặc được cập nhật.
+
+Quá trình plan sẽ in ra cho những kết quả rất hữu ích, chỉ cần đọc những gì quá trình plan in là biết resource trên infrastructure sẽ như thế nào. Khi chạy câu lệnh plan, thì terraform sẽ thực hiện 3 bước chính như sau:
+
+* Đọc file configuration và state files: terraform sẽ đọc file configuration và state files (nếu có tồn tại) trước để lấy thông tin về resource đang ra sao.
+* Sau đó nó sẽ xác định những hành động nào sẽ được thực hiện: terraform sẽ thực hiện tính toán để xác định hành động nào sẽ được thực thi, có thể là Create(), Read(), Update(), Delete(), hoặc không làm gì cả (No-op).
+* Output plan
+
+> Biểu đồ minh họa của quá trình Plan
+![](images/plan-model.jpg)
+
+### Create S3 resource
+
