@@ -215,7 +215,7 @@ output "ec2" {
   }
 }
 ```
-Phần output trên sẽ in ra giá trị public_ip là một mảng IP của tất cả EC2 được tạo ra. Còn nếu muốn in output ra theo kiểu { public_ip1: /<value>, public_ip2: /<value> } thì có thể dùng hàm format.
+Phần output trên sẽ in ra giá trị public_ip là một mảng IP của tất cả EC2 được tạo ra. Còn nếu muốn in output ra theo kiểu { public_ip1: \<value>, public_ip2: \<value> } thì có thể dùng hàm format.
 ## Format function
 
 ```
@@ -223,7 +223,7 @@ output "ec2" {
   value = { for i, j in aws_instance.hello : format("public_ip%d", i + 1) => j.public_ip }
 }
 ```
-> Chạy *terraform* plan để kiểm tra ta sẽ thấy output lúc này sẽ là dạng { public_ip1: /<value>, public_ip2: /<value> }.
+> Chạy *terraform* plan để kiểm tra ta sẽ thấy output lúc này sẽ là dạng { public_ip1: \<value>, public_ip2: \<value> }.
 
 ```
 ...
@@ -366,7 +366,7 @@ resource "aws_s3_bucket_policy" "static" {
   policy = file("s3_static_policy.json")
 }
 ```
-Khi ta dùng S3 ở chế độ Static Website, thì URL của trang web của ta sẽ có định dạng *<http://<bucket-name>.s3-website-<region>.amazonaws.com>*.
+Khi ta dùng S3 ở chế độ Static Website, thì URL của trang web của ta sẽ có định dạng *<http://\<bucket-name>.s3-website-\<region>.amazonaws.com>*.
 
 Tiếp theo tải tệp tin lên S3 Bucket để hosting trang web của ta. Tải source code ở đây ![Static Web](https://github.com/hoalongnatsu/static-web), sau khi tải xong thì nhớ xóa tệp .git đi.
 
