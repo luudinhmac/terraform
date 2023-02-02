@@ -367,7 +367,115 @@ resource "aws_s3_bucket_policy" "static" {
 ```
 Khi ta dùng S3 ở chế độ Static Website, thì URL của trang web của ta sẽ có định dạng <http://<bucket-name>.s3-website-<region>.amazonaws.com>.
 
-Tiếp theo tải tệp tin lên S3 Bucket để hosting trang web của ta. Tải source code ở đây ![Static Web](https://github.com/hoalongnatsu/static-web)(<a>), sau khi tải xong thì nhớ xóa tệp .git đi.
+Tiếp theo tải tệp tin lên S3 Bucket để hosting trang web của ta. Tải source code ở đây ![Static Web](https://github.com/hoalongnatsu/static-web), sau khi tải xong thì nhớ xóa tệp .git đi.
+
+Để tải tệp tin lên S3, dùng AWS CLI.
+
+> aws s3 cp static-web s3://terraform-series-bai3-20230202 --recursive
+
+
+### Tải tệp tin lên S3 bằng Terraform
+Để tải tệp tin lên S3 thì dùng resource là *aws_s3_object*. Cập nhật lại tệp tin main.tf
+```
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "4.52.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-east-2"
+}
+
+resource "aws_s3_bucket" "static" {
+  bucket        = "terraform-series-bai3-20230202"
+  force_destroy = true
+
+  tags = local.tags
+}
+
+resource "aws_s3_bucket_acl" "static" {
+  bucket = aws_s3_bucket.static.id
+  acl    = "public-read"
+}
+
+resource "aws_s3_bucket_website_configuration" "static" {
+  bucket = aws_s3_bucket.static.bucket
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
+}
+
+resource "aws_s3_bucket_policy" "static" {
+  bucket = aws_s3_bucket.static.id
+  policy = file("s3_static_policy.json")
+}
+
+locals {
+  mime_types = {
+    html  = "text/html"
+    css   = "text/css"
+    ttf   = "font/ttf"
+    woff  = "font/woff"
+    woff2 = "font/woff2"
+    js    = "application/javascript"
+    map   = "application/javascript"
+    json  = "application/json"
+    jpg   = "image/jpeg"
+    png   = "image/png"
+    svg   = "image/svg+xml"
+    eot   = "application/vnd.ms-fontobject"
+  }
+}
+
+resource "aws_s3_object" "object" {
+  for_each = fileset(path.module, "static-web/**/*")
+  bucket = aws_s3_bucket.static.id
+  key    = replace(each.value, "static-web", "")
+  source = each.value
+  etag         = filemd5("${each.value}")
+  content_type = lookup(local.mime_types, split[".", each.value](length(split(".", each.value)) - 1))
+}
+```
 
 ## Fileset function
-## Local values
+Ví dụ: có thư mục như sau:
+
+```.
+├── index.html
+├── index.css
+```
+Thì khi dùng hàm fileset(path.module, "*") sẽ có được data set như sau:
+```
+{
+  "index.html": "index.html",
+  "index.css" : "index.css"
+}
+```
+Với giá trị key và value là tên của tệp tin. Ở trên, dùng hàm fileset và aws_s3_object resource để tải toàn bộ tệp tin trong thư mục static-web lên trên S3.
+
+## Locals block
+Có một block nữa tên là locals, đây là block giúp khai báo một giá trị local trong tệp tin Terraform và có thể sử dụng lại được nhiều lần. Cú pháp như sau:
+
+![](./images/local_block.PNG)
+
+Không giống như variable block, cần phải khai báo kiểu dữ liệu thì locals block sẽ gán thẳng giá trị cho nó. Ví dụ như sau:
+```
+locals {
+  one = 1
+  two = 2
+  name = "max"
+  flag = true
+}
+```
+Để truy cập giá trị local thì dùng cú pháp local.<KEY>, ví dụ:
+
+local.one
