@@ -56,4 +56,4 @@ resource "aws_instance" "bai1" {
 
 > Kiểm tra trên AWS console thì ec2 đã được xóa
 
-# ![Life cycle resource in terraform](https://github.com/luudinhmac/terraform/tree/master/bai2)
+# [Life cycle resource in terraform](https://github.com/luudinhmac/terraform/tree/master/bai2)
