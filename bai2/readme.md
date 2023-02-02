@@ -366,3 +366,285 @@ Quá trình plan sẽ in ra cho những kết quả rất hữu ích, chỉ cầ
 
 ### Create S3 resource
 
+Chạy lệnh apply để tạo S3 trên AWS, ở trên thì khi chạy lệnh apply nó sẽ có thêm bước xác nhận và bắt ta nhập vào yes, nếu muốn bỏ qua bước xác nhận thì khi chạy ta thêm vào -auto-approve.
+
+![](images/terraform_apply_s3.PNG)
+Như đã nói ở trên khi chạy xong câu lệnh apply, thì terraform sẽ tạo ra một file terraform.tfstate để lưu state lại, click vào thì sẽ thấy nó lưu state của S3. Mở console web của AWS Cloud sẽ thấy S3 bucket đã được tạo ra với tên như trong file config là "terraform-bucket-2023-01-02".
+
+![](images/bucket_aws_create.PNG)
+
+Làm sao terraform tạo được S3 resource này? Thì trong quá trình apply, terraform sẽ gọi Create() function của aws_s3_bucket resource type.
+
+![](images/tf_create.PNG)
+Thì trong Create() function của resource type aws_s3_bucket có chứa code mà nó sẽ gọi API lên AWS để thực hiện tạo S3 bucket, nên khi terraform gọi tới function này thì S3 resource sẽ được tạo ra.
+
+Biểu đồ luồng create.
+
+![](images/create_func_model.PNG)
+
+### No-op
+
+Khi đã tạo resource xong, nếu không sửa gì cả, thì khi thực thi plan terraform sẽ đi qua bước No-op trong biểu đồ phía trên. Như để đây nếu chạy terraform plan thì đầu tiên terraform sẽ đọc file config, sau đó nó phát hiện có state file, nó đọc state file. Kiểm tra S3 mà viết trong file config có tồn tại trong state file hay không, nếu có terraform sẽ thực thi Read() function của resource type aws_s3_bucket.
+
+![](images/tf_read_func.webp)
+
+Read() sẽ chứa code mà gọi lên AWS để lấy state của S3 hiện tại trên AWS, và so sánh với state của S3 trong state file. Nếu không có gì thay đổi, thì Read() sẽ return về kết quả là không có gì thay đổi. Và terraform sẽ không thực thi hành động nào cả.
+
+Biểu đồ luồng no-op.
+
+![](images/tf_no-op_model.PNG)
+
+### Update S3 resource
+Sửa config trong terraform file, trong terraform không có câu lệnh update, chỉ cần sửa config file và chạy lại câu lệnh apply, terrform sẽ tự xác định dựa vào resource state để thực hện update cho ta. Sửa lại bucket name của s3.
+
+```
+provider "aws" {
+  region = "us-east-2"
+}
+
+resource "aws_s3_bucket" "terraform-bucket" {
+  bucket = "terraform-bucket-2023-01-02-update"
+
+  tags = {
+    Name = "Terraform Series"
+  }
+}
+```
+
+
+
+mac@mac:~/data/terraform/bai2/S3$ terraform plan
+aws_s3_bucket.terraform-bucket: Refreshing state... [id=terraform-bucket-2023-01-02]
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+/# aws_s3_bucket.terraform-bucket must be replaced
+
+-/+ resource "aws_s3_bucket" "terraform-bucket" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      ~ arn                         = "arn:aws:s3:::terraform-bucket-2023-01-02" -> (known after apply)
+      ~ bucket                      = "terraform-bucket-2023-01-02" -> "terraform-bucket-2023-01-02-update" # forces replacement
+      ~ bucket_domain_name          = "terraform-bucket-2023-01-02.s3.amazonaws.com" -> (known after apply)
+      ~ bucket_regional_domain_name = "terraform-bucket-2023-01-02.s3.us-east-2.amazonaws.com" -> (known after apply)
+      ~ hosted_zone_id              = "Z2O1EMRO9K5GLX" -> (known after apply)
+      ~ id                          = "terraform-bucket-2023-01-02" -> (known after apply)
+      ~ object_lock_enabled         = false -> (known after apply)
+      + policy                      = (known after apply)
+      ~ region                      = "us-east-2" -> (known after apply)
+      ~ request_payer               = "BucketOwner" -> (known after apply)
+        tags                        = {
+            "Name" = "Terraform Series"
+        }
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+        # (2 unchanged attributes hidden)
+
+      + cors_rule {
+          + allowed_headers = (known after apply)
+          + allowed_methods = (known after apply)
+          + allowed_origins = (known after apply)
+          + expose_headers  = (known after apply)
+          + max_age_seconds = (known after apply)
+        }
+
+      - grant {
+          - id          = "2eb4f59db9d2795cbdf6fb5c860cd94732a3fe376d6d96c2c5d5bd766c597645" -> null
+          - permissions = [
+              - "FULL_CONTROL",
+            ] -> null
+          - type        = "CanonicalUser" -> null
+        }
+      + grant {
+          + id          = (known after apply)
+          + permissions = (known after apply)
+          + type        = (known after apply)
+          + uri         = (known after apply)
+        }
+
+      + lifecycle_rule {
+          + abort_incomplete_multipart_upload_days = (known after apply)
+          + enabled                                = (known after apply)
+          + id                                     = (known after apply)
+          + prefix                                 = (known after apply)
+          + tags                                   = (known after apply)
+
+          + expiration {
+              + date                         = (known after apply)
+              + days                         = (known after apply)
+              + expired_object_delete_marker = (known after apply)
+            }
+
+          + noncurrent_version_expiration {
+              + days = (known after apply)
+            }
+
+          + noncurrent_version_transition {
+              + days          = (known after apply)
+              + storage_class = (known after apply)
+            }
+
+          + transition {
+              + date          = (known after apply)
+              + days          = (known after apply)
+              + storage_class = (known after apply)
+            }
+        }
+
+      + logging {
+          + target_bucket = (known after apply)
+          + target_prefix = (known after apply)
+        }
+
+      + object_lock_configuration {
+          + object_lock_enabled = (known after apply)
+
+          + rule {
+              + default_retention {
+                  + days  = (known after apply)
+                  + mode  = (known after apply)
+                  + years = (known after apply)
+                }
+            }
+        }
+
+      + replication_configuration {
+          + role = (known after apply)
+
+          + rules {
+              + delete_marker_replication_status = (known after apply)
+              + id                               = (known after apply)
+              + prefix                           = (known after apply)
+              + priority                         = (known after apply)
+              + status                           = (known after apply)
+
+              + destination {
+                  + account_id         = (known after apply)
+                  + bucket             = (known after apply)
+                  + replica_kms_key_id = (known after apply)
+                  + storage_class      = (known after apply)
+
+                  + access_control_translation {
+                      + owner = (known after apply)
+                    }
+
+                  + metrics {
+                      + minutes = (known after apply)
+                      + status  = (known after apply)
+                    }
+
+                  + replication_time {
+                      + minutes = (known after apply)
+                      + status  = (known after apply)
+                    }
+                }
+
+              + filter {
+                  + prefix = (known after apply)
+                  + tags   = (known after apply)
+                }
+
+              + source_selection_criteria {
+                  + sse_kms_encrypted_objects {
+                      + enabled = (known after apply)
+                    }
+                }
+            }
+        }
+
+      + server_side_encryption_configuration {
+          + rule {
+              + bucket_key_enabled = (known after apply)
+
+              + apply_server_side_encryption_by_default {
+                  + kms_master_key_id = (known after apply)
+                  + sse_algorithm     = (known after apply)
+                }
+            }
+        }
+
+      ~ versioning {
+          ~ enabled    = false -> (known after apply)
+          ~ mfa_delete = false -> (known after apply)
+        }
+
+      + website {
+          + error_document           = (known after apply)
+          + index_document           = (known after apply)
+          + redirect_all_requests_to = (known after apply)
+          + routing_rules            = (known after apply)
+        }
+    }
+
+Plan: 1 to add, 0 to change, 1 to destroy.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you run "terraform apply" now.
+
+
+S3 bucket sẽ được terraform update lại bằng cách thực hiện destroy and then create replacement. Nghĩa là trước tiên terraform sẽ xóa S3 resource cũ, sau đó nó sẽ tạo lại resource S3 mới với tên bucket khác. Tại sao lại như vậy thì trường bucket ở trong resource type aws_s3_bucket là một thuộc tính force new.
+
+Trong terraform, resource sẽ có hai loại thuộc tính (attribute) là force new với normal update:
+
+* Force new attribute: resource sẽ được re-create (xóa resource cũ trước và tạo ra lại resouce mới).
+
+![](images/tf_force_new_attribute.PNG)
+
+* Normal update attribute: resource được update bình thường, không cần phải xóa resouce cũ.
+
+![](./images/tf_normal_update_attribute.PNG)
+
+Một thuộc tính sẽ thuộc loại nào thì tùy thuộc vào provider và resource type. Ở trên vì thay đổi thuộc tính force new của aws_s3_bucket nên nó sẽ được re-create. Vì việc xóa và tạo lại sẽ gặp rất nhiều vấn đề, nên cần chạy câu lệnh plan để xác định tại sao resource lại như vậy, đây là tác dụng của việc chạy câu lệnh plan trước, nhớ là luôn luôn nên chạy plan trước khi deploy.
+
+Vì S3 bucket của mới tạo và không có gì trong đó hết, nên cứ chạy terraform apply để nó update bình thường.
+
+![](./images/tf_apply_recreate_s3.PNG)
+
+Sau khi chạy xong thì kiểm tra trên Aws console thì S3 bucket đã được tạo ra.
+
+Biểu đồ của luồng update
+![](./images/tf_update_model.jpg)
+
+### Delete S3 resource
+
+Khi chạy lệnh destroy, thì trước đó nó sẽ thực hiện plan, đọc trong state file xem coi có resource đó không, nếu có thì nó sẽ thực hiện Delete() function của resource type aws_s3_bucket.
+
+![](./images/tf_delete_func.PNG)
+
+Biểu đồ luồng delete
+![](./images/tf_delete_model.jpg)
+
+Sau khi ta chạy câu lệnh destroy xong, thì workspace của ta sẽ như sau:
+
+```
+.
+├── main.tf
+├── terraform.tfstate
+└── terraform.tfstate.backup
+```
+
+Có thêm file terraform.tfstate.backup, là file được tạo ra từ state file trước đó, để xem state trước đó của các resource tạo ra sao.
+
+> Khi xóa toàn bộ config trong file terraform và chạy câu lệnh apply thì tương ứng như chạy câu lệnh terraform destroy.
+
+
+### Resource drift
+ Nếu mà có ai đó thay đổi config của resource chúng ta bên ngoài terraform thì sao? Terraform sẽ xử lý việc đó như thế nào?
+
+- Dùng lại resource s3 ở trên tạo lại
+```
+terraform apply -auto-approve
+```
+Sau đó truy cập AWS console và sửa lại trường tag của S3
+
+Lúc này terraform không có tự động phát hiện và update lại file config terraform. Mà khi chạy câu lệnh apply, nó sẽ phát hiện thay đổi và update lại trường tags mà thay đổi ngoài terraform thành giống với tags viết trong file config. Chạy câu lệnh plan trước để xem.
+
+![](./images/tf_drift.PNG)
+
+> Terraform sẽ phát hiện được resource đã bị thay đổi bên ngoài terraform, nó in ra câu Note: Objects have changed outside of Terraform để báo biết việc đó. Và tùy thuộc vào thuộc tính mà ta thay đổi bên ngoài terraform là force new hay normal update thì terraform sẽ thực hiện re-create hay update bình thường.
+
+> Giờ Chạy lại câu lệnh apply thì S3 tags củađược update lại như cũ.
