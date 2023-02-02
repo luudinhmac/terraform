@@ -412,7 +412,7 @@ resource "aws_s3_bucket" "terraform-bucket" {
 ```
 
 
-
+```
 mac@mac:~/data/terraform/bai2/S3$ terraform plan
 aws_s3_bucket.terraform-bucket: Refreshing state... [id=terraform-bucket-2023-01-02]
 
@@ -584,7 +584,7 @@ Plan: 1 to add, 0 to change, 1 to destroy.
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you run "terraform apply" now.
-
+```
 
 S3 bucket sẽ được terraform update lại bằng cách thực hiện destroy and then create replacement. Nghĩa là trước tiên terraform sẽ xóa S3 resource cũ, sau đó nó sẽ tạo lại resource S3 mới với tên bucket khác. Tại sao lại như vậy thì trường bucket ở trong resource type aws_s3_bucket là một thuộc tính force new.
 
@@ -648,3 +648,6 @@ Lúc này terraform không có tự động phát hiện và update lại file c
 > Terraform sẽ phát hiện được resource đã bị thay đổi bên ngoài terraform, nó in ra câu Note: Objects have changed outside of Terraform để báo biết việc đó. Và tùy thuộc vào thuộc tính mà ta thay đổi bên ngoài terraform là force new hay normal update thì terraform sẽ thực hiện re-create hay update bình thường.
 
 > Giờ Chạy lại câu lệnh apply thì S3 tags củađược update lại như cũ.
+
+
+# ![Bài 3: Terraform function programming](https://github.com/luudinhmac/terraform/tree/master/bai3_terraform_function_programing)
