@@ -8,7 +8,7 @@ Terraform hỗ trợ ta lập trình theo cách functional programming
 >
 ```
 provider "aws" {
-  region = "us-uest-2"
+  region = "us-east-2"
 }
 
 data "aws_ami" "ubuntu" {
