@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     aws = {
-      resource = "hashicorp/aws"
-      version  = "4.52.0"
+      source  = "hashicorp/aws"
+      version = "4.52.0"
     }
   }
 }
@@ -16,7 +16,7 @@ resource "aws_vpc" "myvpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   tags = {
-    "Name" = "Custom"
+    "Name" = "Custom_VPC"
   }
 }
 
@@ -61,7 +61,7 @@ resource "aws_subnet" "private_subnet" {
   count             = length(local.private)
   vpc_id            = aws_vpc.myvpc.id
   cidr_block        = local.private[count.index]
-  availability_zone = local.private[count.index % length(local.zone)]
+  availability_zone = local.zone[count.index % length(local.zone)]
   tags = {
     "Name" = local.tags[0]
   }
@@ -78,10 +78,11 @@ resource "aws_subnet" "public_subnet" {
   }
 }
 
+# Create Internet gateway
 resource "aws_internet_geteway" "my_ig" {
   vpc_id = aws_vpc.myvpc.id
   tags = {
-    "Name" = "custome_gw"
+    "Name" = "custome_igw"
   }
 }
 
@@ -99,41 +100,41 @@ resource "aws_route_table" "public" {
 
 # association route table for subnets
 resource "aws_route_table_association" "public_association" {
-    for_each = { for i, j in aws_subnet.public_subnet : i => j } 
-    subnet_id = each.value.id
-    route_table_id = aws_route_table.public.id
+  for_each       = { for i, j in aws_subnet.public_subnet : i => j }
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.public.id
 }
 
 # Create NAT gateway
 resource "aws_eip" "nat" {
-    vpc = true
+  vpc = true
 }
 
 resource "aws_nat_gateway" "public" {
-    depends_on = [aws_internet_gateway.ig]
+  depends_on = [aws_internet_gateway.ig]
 
-    association_id = aws_eip.nat.id
-    subnet_id = aws_subnet.public_subnet[0].id 
-    tags = {
-        Name = "Public NAT"
-    }
+  association_id = aws_eip.nat.id
+  subnet_id      = aws_subnet.public_subnet[0].id
+  tags = {
+    Name = "Public NAT"
+  }
 }
 
 # Create private route table and association Nat
 resource "aws_route_table" "private" {
-    vpc_id = aws_vpc.my_vpc.id
-    route {
-        cidr_block = "0.0.0.0/0"
-        gateway_id = aws_nat_gateway.public.id
-    }
-    tags = {
-        "Name" = "private"
-    }
+  vpc_id = aws_vpc.my_vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.public.id
+  }
+  tags = {
+    "Name" = "private"
+  }
 }
 
 # Associate route table into private subnets
 resource "aws_route_table_association" "public_private" {
-    for_each = { for i, j in aws_subnet.private_subnet : i => j}
-    subnet_id = each.value.id
-    route_table = aws_route_table.private.id
+  for_each    = { for i, j in aws_subnet.private_subnet : i => j }
+  subnet_id   = each.value.id
+  route_table = aws_route_table.private.id
 }
