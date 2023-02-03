@@ -82,7 +82,7 @@ resource "aws_subnet" "public_subnet" {
 }
 
 # Create Internet gateway
-resource "aws_internet_geteway" "my_ig" {
+resource "aws_internet_gateway" "my_ig" {
   vpc_id = aws_vpc.myvpc.id
   tags = {
     "Name" = "custome_igw"
