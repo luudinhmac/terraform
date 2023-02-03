@@ -480,3 +480,5 @@ locals {
 Để truy cập giá trị local thì dùng cú pháp *local.<KEY>*, ví dụ:
 
 local.one
+
+# [=> Terraform module: Create VPC AWS](https://github.com/luudinhmac/terraform/tree/master/b5_TfModule_Create_VPC_AWS)
