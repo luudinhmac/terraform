@@ -50,6 +50,7 @@ resource "aws_vpc" "myvpc" {
 #     }
 # }
 
+# local block
 locals {
   private = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
   public  = ["10.0.3.0/24", "10.0.4.0/24", "10.0.5.0/24"]
@@ -57,6 +58,7 @@ locals {
   tags    = ["private-subnet", "public-subnet"]
 }
 
+# Create private subnets
 resource "aws_subnet" "private_subnet" {
   count             = length(local.private)
   vpc_id            = aws_vpc.myvpc.id
@@ -67,6 +69,7 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
+# Create public subnets
 resource "aws_subnet" "public_subnet" {
   count = length(local.public)
 
@@ -110,6 +113,7 @@ resource "aws_eip" "nat" {
   vpc = true
 }
 
+# Create NAT gateway
 resource "aws_nat_gateway" "public" {
   depends_on = [aws_internet_gateway.ig]
 
