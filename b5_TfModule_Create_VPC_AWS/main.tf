@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 # Create vpc
-resource "aws_vpc" "myvpc" {
+resource "aws_vpc" "my_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   tags = {
@@ -21,7 +21,7 @@ resource "aws_vpc" "myvpc" {
 }
 
 # resource "aws_subnet" "private_subnet_2a" {
-#     vpc_id = aws_vpc.myvpc.id
+#     vpc_id = aws_vpc.my_vpc.id
 #     cidr_block = "10.0.0.0/24"
 #     availability_zone = "us-east-2a"
 
@@ -31,7 +31,7 @@ resource "aws_vpc" "myvpc" {
 # }
 
 # resource "aws_subnet" "private_subnet_2b" {
-#     vpc_id = aws_vpc.myvpc.id
+#     vpc_id = aws_vpc.my_vpc.id
 #     cidr_block = "10.0.1.0/24"
 #     availability_zone = "us-east-2b"
 
@@ -41,7 +41,7 @@ resource "aws_vpc" "myvpc" {
 # }
 
 # resource "aws_subnet" "private_subnet_2c" {
-#     vpc_id = aws_vpc.myvpc.id
+#     vpc_id = aws_vpc.my_vpc.id
 #     cidr_block = "10.0.2.0/24"
 #     availability_zone = "us-east-2c"
 
@@ -61,7 +61,7 @@ locals {
 # Create private subnets
 resource "aws_subnet" "private_subnet" {
   count             = length(local.private)
-  vpc_id            = aws_vpc.myvpc.id
+  vpc_id            = aws_vpc.my_vpc.id
   cidr_block        = local.private[count.index]
   availability_zone = local.zone[count.index % length(local.zone)]
   tags = {
@@ -73,7 +73,7 @@ resource "aws_subnet" "private_subnet" {
 resource "aws_subnet" "public_subnet" {
   count = length(local.public)
 
-  vpc_id            = aws_vpc.myvpc.id
+  vpc_id            = aws_vpc.my_vpc.id
   cidr_block        = local.public[count.index]
   availability_zone = local.zone[count.index % length(local.zone)]
   tags = {
@@ -83,7 +83,7 @@ resource "aws_subnet" "public_subnet" {
 
 # Create Internet gateway
 resource "aws_internet_gateway" "my_ig" {
-  vpc_id = aws_vpc.myvpc.id
+  vpc_id = aws_vpc.my_vpc.id
   tags = {
     "Name" = "custome_igw"
   }
@@ -91,7 +91,7 @@ resource "aws_internet_gateway" "my_ig" {
 
 # association internet gateway into route table
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.myvpc.id
+  vpc_id = aws_vpc.my_vpc.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.my_ig.id
@@ -128,6 +128,7 @@ resource "aws_nat_gateway" "public" {
 # Create private route table and association Nat
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.my_vpc.id
+
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_nat_gateway.public.id
@@ -141,5 +142,5 @@ resource "aws_route_table" "private" {
 resource "aws_route_table_association" "public_private" {
   for_each    = { for i, j in aws_subnet.private_subnet : i => j }
   subnet_id   = each.value.id
-  route_table = aws_route_table.private.id
+  route_table_id = aws_route_table.private.id
 }
