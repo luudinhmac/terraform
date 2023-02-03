@@ -650,4 +650,4 @@ Lúc này terraform không có tự động phát hiện và update lại file c
 > Giờ Chạy lại câu lệnh apply thì S3 tags củađược update lại như cũ.
 
 
-# [Bài 3: Terraform function programming](https://github.com/luudinhmac/terraform/tree/master/bai3_terraform_function_programing)
+# [=> Terraform function programming](https://github.com/luudinhmac/terraform/tree/master/b3_terraform_function_programing)
