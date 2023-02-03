@@ -117,8 +117,9 @@ resource "aws_eip" "nat" {
 resource "aws_nat_gateway" "public" {
   depends_on = [aws_internet_gateway.ig]
 
-  association_id = aws_eip.nat.id
-  subnet_id      = aws_subnet.public_subnet[0].id
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public_subnet[0].id
+
   tags = {
     Name = "Public NAT"
   }
