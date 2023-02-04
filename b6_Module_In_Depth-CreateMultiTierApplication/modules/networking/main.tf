@@ -36,7 +36,7 @@ module "web_sg" {
   ingress_rules = [
     {
       port           = "80"
-      security_group = [module.lb_sg.security_group.id]
+      security_group = [module.alb_sg.security_group.id]
     }
   ]
 }
