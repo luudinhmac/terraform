@@ -1,5 +1,5 @@
 output "vpc" {
-  module = module.vpc
+  value = module.vpc
 }
 
 output "sg" {
