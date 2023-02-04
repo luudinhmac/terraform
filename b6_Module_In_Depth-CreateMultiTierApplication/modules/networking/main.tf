@@ -21,7 +21,7 @@ module "vpc" {
 
 module "alb_sg" {
   source = "terraform-in-action/sg/aws"
-  vpc_id = module.vpc_id
+  vpc_id = module.vpc.vpc_id
   ingress_rules = [
     {
       port       = "80"
@@ -32,7 +32,7 @@ module "alb_sg" {
 
 module "web_sg" {
   source = "terraform-in-action/sg/aws"
-  vpc_id = module.vpc_id
+  vpc_id = module.vpc.vpc_id
   ingress_rules = [
     {
       port           = "80"
@@ -43,7 +43,7 @@ module "web_sg" {
 
 module "db_sg" {
   source = "terraform-in-action/sg/aws"
-  vpc_id = module.vpc_id
+  vpc_id = module.vpc.vpc_id
   ingress_rules = [
     {
       port           = "5432"
