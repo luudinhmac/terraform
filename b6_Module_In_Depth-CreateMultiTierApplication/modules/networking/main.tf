@@ -8,7 +8,7 @@ module "vpc" {
 
   name = "${var.project}-vpc"
   cidr = var.vpc_cidr
-  azs  = data.aws_availability_zones.names
+  azs  = [data.aws_availability_zones.names]
 
   private_subnets  = var.private_subnets
   public_subnets   = var.public_subnets
