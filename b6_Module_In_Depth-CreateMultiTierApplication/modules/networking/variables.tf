@@ -14,6 +14,6 @@ variable "public_subnets" {
   type = list(string)
 }
 
-variable "database-subnets" {
+variable "database_subnets" {
   type = list(string)
 }
