@@ -1,5 +1,5 @@
 module "vpc" {
-  source  = "terraform-aws-module/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
   version = "3.12.0"
 
   name = "${var.project}-vpc"
@@ -16,34 +16,34 @@ module "vpc" {
 }
 
 module "alb_sg" {
-    source = "terraform-in-action/sg/aws"
-    vpc_id = module.vpc_id
-    ingress_rules = [
-        {
-            port = "80"
-            cidr_block = ["0.0.0.0/0"]
-        }
-    ]
+  source = "terraform-in-action/sg/aws"
+  vpc_id = module.vpc_id
+  ingress_rules = [
+    {
+      port       = "80"
+      cidr_block = ["0.0.0.0/0"]
+    }
+  ]
 }
 
 module "web_sg" {
-    source = "terraform-in-action/sg/aws"
-    vpc_id = module.vpc_id
-    ingress_rules = [
-        {
-            port = "80"
-            security_group = [module.lb_sg.security_group.id]
-        }
-    ]
+  source = "terraform-in-action/sg/aws"
+  vpc_id = module.vpc_id
+  ingress_rules = [
+    {
+      port           = "80"
+      security_group = [module.lb_sg.security_group.id]
+    }
+  ]
 }
 
 module "db_sg" {
-    source = "terraform-in-action/sg/aws"
-    vpc_id = module.vpc_id
-    ingegress_rules = [
-        {
-            port = "5432"
-            security_group = [module.web_sg.security_group.id]
-        }
-    ]  
+  source = "terraform-in-action/sg/aws"
+  vpc_id = module.vpc_id
+  ingegress_rules = [
+    {
+      port           = "5432"
+      security_group = [module.web_sg.security_group.id]
+    }
+  ]
 }
