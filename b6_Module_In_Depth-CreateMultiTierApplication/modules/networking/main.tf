@@ -1,4 +1,4 @@
-data "aws_availability_zones" "names" {
+data "aws_availability_zones" "available" {
   state = "available"
 }
 
@@ -8,7 +8,7 @@ module "vpc" {
 
   name             = "${var.project}-vpc"
   cidr             = var.vpc_cidr
-  azs              = [for zone in data.aws_availability_zones.names : zone]
+  azs              = data.aws_availability_zones.available.names
   private_subnets  = var.private_subnets
   public_subnets   = var.public_subnets
   database_subnets = var.database_subnets
