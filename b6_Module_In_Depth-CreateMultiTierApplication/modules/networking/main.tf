@@ -40,7 +40,7 @@ module "web_sg" {
 module "db_sg" {
   source = "terraform-in-action/sg/aws"
   vpc_id = module.vpc_id
-  ingegress_rules = [
+  ingress_rules = [
     {
       port           = "5432"
       security_group = [module.web_sg.security_group.id]
