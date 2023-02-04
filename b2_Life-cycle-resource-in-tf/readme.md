@@ -39,7 +39,7 @@ resource "aws_instance" "server" {
 * Kiểm tra resources nào được tạo ra 
 > terraform plan
 
-```
+~~~
 Terraform used the selected providers to generate the following execution plan.
 Resource actions are indicated with the following symbols:
   + create
@@ -172,7 +172,7 @@ Plan: 1 to add, 0 to change, 0 to destroy.
 Note: You didn't use the -out option to save this plan, so Terraform can't
 guarantee to take exactly these actions if you run "terraform apply" now.
 
-```
+~~~
 
 > Khi chạy câu lệnh plan trên thì nó sẽ hiển thị ra những resouce nào sẽ được tạo, ở dòng hiển thị gần cuối là Plan: 1 to add, 0 to change, 0 to destroy., nghĩa là sẽ có 1 resource được thêm vào infrastructure hiện tại.
 > Ngoài việc hiển thị những resource sẽ được tạo, câu lệnh này cũng sẽ kiểm tra lỗi syntax của file terraform config và sẽ báo lỗi nếu không viết đúng syntax.
