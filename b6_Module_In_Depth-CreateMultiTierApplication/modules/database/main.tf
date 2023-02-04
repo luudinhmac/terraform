@@ -10,7 +10,7 @@ resource "aws_db_instance" "database" {
   engine_version         = "12.7"
   instance_class         = "db.t2.micro"
   identifier             = "${var.project}-db-instance"
-  name                   = "terraform"
+  name                   = "series"
   username               = "admin"
   password               = random_password.password.result
   db_subnet_group_name   = var.vpc.database.subnet_group
