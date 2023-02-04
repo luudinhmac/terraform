@@ -13,7 +13,7 @@ resource "aws_db_instance" "database" {
   db_name                = "series"
   username               = "admin"
   password               = random_password.password.result
-  db_subnet_group_name   = var.vpc.database.subnet_group
+  db_subnet_group_name   = var.vpc.database_subnet_group
   vpc_security_group_ids = [var.sg.db]
   skip_final_snapshot    = true
 }
