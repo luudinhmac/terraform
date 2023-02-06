@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket         = "terraform-series-s3-backend"
     key            = "test-project"
-    region         = "us-east-2"
+    region         = "us-west-2"
     encrypt        = true
     role_arn       = "arn:aws:iam::746186632829:role/HpiS3BackendRole"
     dynamodb_table = "terraform-series-s3-backend"
@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-2"
+  region = "us-west-2"
 }
 
 data "aws_ami" "ami" {
