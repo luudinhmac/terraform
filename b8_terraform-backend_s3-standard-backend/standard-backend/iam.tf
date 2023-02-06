@@ -21,7 +21,6 @@ data "aws_iam_policy_document" "policy_doc" {
   }
 }
 
-
 resource "aws_iam_policy" "policy" {
   name   = "${title(var.project)}S3BackendPolicy"
   path   = "/"
