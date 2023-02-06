@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-2"
+  region = "us-east-2"
 }
 
 data "aws_ami" "ami" {
@@ -26,7 +26,7 @@ data "aws_ami" "ami" {
 
 resource "aws_instance" "server" {
   ami           = data.aws_ami.ami.id
-  instance_type = "t3.micro"
+  instance_type = "t2.micro"
 
   lifecycle {
     create_before_destroy = true
