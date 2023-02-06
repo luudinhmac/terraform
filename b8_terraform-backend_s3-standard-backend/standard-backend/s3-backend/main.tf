@@ -4,7 +4,7 @@ terraform {
     key            = "test-project"
     region         = "us-east-2"
     encrypt        = true
-    role_arn       = "arn:aws:iam::<ACCOUNT_ID>:role/HpiS3BackendRole"
+    role_arn       = "arn:aws:iam::746186632829:role/HpiS3BackendRole"
     dynamodb_table = "terraform-series-s3-backend"
   }
 }
