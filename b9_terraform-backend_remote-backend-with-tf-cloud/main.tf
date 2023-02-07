@@ -25,10 +25,10 @@ data "aws_ami" "ami" {
 
 resource "aws_instance" "server" {
   ami           = data.aws_ami.ami.id
-  instance_type = "t3.micro"
+  instance_type = "t2.micro"
 
   lifecycle {
-    create_before_destroy = true
+    create_before_destroy = false
   }
 
   tags = {
