@@ -29,7 +29,7 @@ resource "aws_instance" "server" {
   instance_type = "t2.micro"
 
   lifecycle {
-    create_before_destroy = true
+    create_before_destroy = false
   }
 
   tags = {

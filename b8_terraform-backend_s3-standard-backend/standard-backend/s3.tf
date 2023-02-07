@@ -13,7 +13,7 @@ resource "aws_s3_bucket_acl" "s3_bucket" {
 resource "aws_s3_bucket_versioning" "s3_bucket" {
   bucket = aws_s3_bucket.s3_bucket-20230206.id
 
-  versioning_configuration {
+  versioning_configuration {  
     status = "Enabled"
   }
 }
