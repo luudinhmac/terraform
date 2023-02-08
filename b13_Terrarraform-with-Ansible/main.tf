@@ -43,7 +43,7 @@ data "aws_ami" "ami" {
         values = ["amzn2-ami-hvm-2.0.*.x86_64-gp2"]
     }
 
-    owners = ['amazon']
+    owners = ["amazon"]
 }
 
 resource "aws_instance" "ansible_server" {
