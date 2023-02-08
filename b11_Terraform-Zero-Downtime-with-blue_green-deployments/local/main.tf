@@ -7,12 +7,12 @@ variable "production" {
 }
 
 module "base" {
-  source     = "module/base"
+  source     = "./module/base"
   production = var.production
 }
 
 module "green" {
-  source      = "module/autoscaling"
+  source      = "./module/autoscaling"
   app_version = "v1.0"
   label       = "green"
   base        = module.base
@@ -20,7 +20,7 @@ module "green" {
 
 
 module "blue" {
-  source      = "module/autoscaling"
+  source      = "./module/autoscaling"
   app_version = "v2.0"
   label       = "blue"
   base        = module.base
