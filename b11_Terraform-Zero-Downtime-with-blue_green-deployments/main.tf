@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 variable "production" {
-  default = "green"
+  default = "blue"  //change here
 }
 
 module "base" {
