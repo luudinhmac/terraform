@@ -12,9 +12,15 @@ data "aws_ami" "ami" {
   }
 
   owners = ["099720109477"]
+
 }
 
 resource "aws_instance" "ansible_server" {
   ami           = data.aws_ami.ami.id
   instance_type = "t2.micro"
+
+  # zero down-time
+  lifecycle {
+    create_before_destroy = true
+  }
 }
