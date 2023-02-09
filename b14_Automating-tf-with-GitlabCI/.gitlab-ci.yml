@@ -1,0 +1,36 @@
+stages:
+  - plan
+  - apply
+
+# Define for all job in CI/CD using image hashicorp/terraform to run commands in terraform
+image:
+  name: hashicorp/terraform
+  entrypoint:
+    - "/usr/bin/env"
+    - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# Cache terraform state, using properties cache.paths
+cache:
+  paths:
+    - .terraform.lock.hcl
+    - terraform.sfstate
+  # Init provider before run command terraform plan and apply
+before_script:
+  - terraform init
+
+# Run plan command to review all resource was created
+plan:
+  stage: plan
+  script:
+    - terraform plan -out "planfile"
+  # Save all reviewed resources to file "planfile" and use artifact to transmitted to other job
+  artifacts:
+    paths:
+      - planfile
+# Run command terraform apply
+apply:
+  stage: apply
+  script:
+    - terraform apply -input=false "planfile"
+  dependencies:
+    - plan
+  when: manual
