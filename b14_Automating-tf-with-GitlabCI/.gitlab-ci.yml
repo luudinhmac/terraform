@@ -22,7 +22,7 @@ before_script:
 plan:
   stage: plan
   script:
-    - terraform plan -var-file=env/$CI_COMMIT_ReF_NAME.tfvars -out "planfile"
+    - terraform plan -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out "planfile"
   # Save all reviewed resources to file "planfile" and use artifact to transmitted to other job
   artifacts:
     paths:
