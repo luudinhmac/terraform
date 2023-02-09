@@ -12,20 +12,24 @@ image:
 cache:
   paths:
     - .terraform.lock.hcl
-    - terraform.sfstate
+    - terraform.sfstate.d/*
   # Init provider before run command terraform plan and apply
 before_script:
   - terraform init
+  - terraform workspace select $CI_COMMIT_REF_NAME
 
 # Run plan command to review all resource was created
 plan:
   stage: plan
   script:
-    - terraform plan -out "planfile"
+    - terraform plan -var-file=env/$CI_COMMIT_ReF_NAME.tfvars -out "planfile"
   # Save all reviewed resources to file "planfile" and use artifact to transmitted to other job
   artifacts:
     paths:
       - planfile
+  only:
+    - dev
+    - pro
 # Run command terraform apply
 apply:
   stage: apply
@@ -34,3 +38,6 @@ apply:
   dependencies:
     - plan
   when: manual
+  only:
+    - dev
+    - pro
