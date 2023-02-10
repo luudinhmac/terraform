@@ -78,4 +78,4 @@ Ngoài việc lựa chọn backend cho terraform, khi làm thực tế ta cũng 
 Khi dùng Terraform Cloud thì, chỉ cần viết code và push lên github, Terraform Cloud sẽ pull code xuống và chạy.
 ![](./images/terraform_cloud.PNG)
 
-# ![Terraform Backend](https://github.com/luudinhmac/terraform/tree/master/b)
+# [Terraform Standard Backend](https://github.com/luudinhmac/terraform/tree/master/8.tf-backend_s3-standard-backend)

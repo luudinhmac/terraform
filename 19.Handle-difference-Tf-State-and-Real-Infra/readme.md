@@ -58,10 +58,35 @@ resource "aws_instance" "server" {
   }
 }
 
-output "ec2" {
+output "instance_id" {
   value = aws_instance.server.id
 }
 ```
 ```
 terraform init && terraform apply -auto-approve
 ```
+
+# Change Infrastructure
+Tiếp theo, dùng AWS CLI để tạo Security Group và gán nó vào EC2. Tạo SG.
+```
+aws ec2 create-security-group --group-name "allow-http" --description "allow http" --region us-east-2 --output text
+
+```
+
+Ta sẽ thấy SG id được in ra terminal, nhớ copy giá trị đó lại.
+
+![](./images/add-sg-cli.PNG)
+
+Cập nhật SG cho phép truy cập port 80
+```
+aws ec2 authorize-security-group-ingress --group-name "allow-http" --protocol tcp --port 80 --cidr 0.0.0.0/0 --region us-east-2
+```
+
+Gán SG vào EC2.
+~~~
+current_security_groups=$(aws ec2 describe-instances --instance-ids $(terraform output -raw instance_id) --query Reservations[*].Instances[*].SecurityGroups[*].GroupId --region us-east-2 --output text)
+~~~
+~~~
+aws ec2 modify-instance-attribute --instance-id $(terraform output -raw instance_id) --groups $current_security_groups sg-07d69a1aa7c17ba71 --region us-west-2
+
+~~~

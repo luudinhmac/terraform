@@ -54,6 +54,6 @@ resource "aws_instance" "server" {
   }
 }
 
-output "ec2" {
+output "instance_id" {
   value = aws_instance.server.id
 }

@@ -481,4 +481,4 @@ locals {
 
 local.one
 
-# [=> Terraform module: Create VPC AWS](https://github.com/luudinhmac/terraform/tree/master/b5_TfModule_Create_VPC_AWS)
+# [=> Terraform module: Create VPC AWS](https://github.com/luudinhmac/terraform/tree/master/5.TfModule_Create_VPC_AWS)
