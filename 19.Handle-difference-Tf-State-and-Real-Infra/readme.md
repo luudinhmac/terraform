@@ -62,31 +62,120 @@ output "instance_id" {
   value = aws_instance.server.id
 }
 ```
+Chạy câu lệnh để tạo resource.
 ```
 terraform init && terraform apply -auto-approve
 ```
+```
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 
+Outputs:
+
+instance_id = "i-01f011bf49adac5fa"
+```
+Mở aws console sẽ thấy ec2 vừa tạo
+![](./images/instance.PNG)
 # Change Infrastructure
-Tiếp theo, dùng AWS CLI để tạo Security Group và gán nó vào EC2. Tạo SG.
+Ví dụ dùng AWS CLI để tạo Security Group và gán nó vào EC2. Tạo SG.
 ```
 aws ec2 create-security-group --group-name "allow-http" --description "allow http" --region us-east-2 --output text
 
 ```
-
-Ta sẽ thấy SG id được in ra terminal, nhớ copy giá trị đó lại.
-
-![](./images/add-sg-cli.PNG)
+SG id được in ra terminal, lưu giá trị này lại để lát nữa sử dụng.
+```
+sg-0e768a8b30604fecb
+```
 
 Cập nhật SG cho phép truy cập port 80
-```
+~~~
 aws ec2 authorize-security-group-ingress --group-name "allow-http" --protocol tcp --port 80 --cidr 0.0.0.0/0 --region us-east-2
-```
+~~~
 
 Gán SG vào EC2.
 ~~~
-current_security_groups=$(aws ec2 describe-instances --instance-ids $(terraform output -raw instance_id) --query Reservations[*].Instances[*].SecurityGroups[*].GroupId --region us-east-2 --output text)
+current_sg=$(aws ec2 describe-instances --instance-ids $(terraform output -raw instance_id) --query Reservations[*].Instances[*].SecurityGroups[*].GroupId --region us-east-2 --output text)
 ~~~
 ~~~
-aws ec2 modify-instance-attribute --instance-id $(terraform output -raw instance_id) --groups $current_security_groups sg-07d69a1aa7c17ba71 --region us-west-2
+aws ec2 modify-instance-attribute --instance-id $(terraform output -raw instance_id) --groups $current_sg sg-0e768a8b30604fecb --region us-east-2
+~~~
 
-~~~
+Lúc này thì hạ tầng aws đã khác so với terraform state. chạy lệnh plan để thấy được sự khác biệt
+```
+terraform plan
+```
+![](./images/tf-plan-change.PNG)
+
+> Nếu bây giờ chạy *terraform apply* thì hạ tầng sẽ rollback lại giống như file state.
+> Nếu muốn file state phản ánh đúng thực tế thì có 2 cách làm.
+> - terraform refresh
+> - terraform apply -refresh-only
+## Terraform refresh
+Khi chạy lệnh *terraform refresh* thì terraform sẽ đọc trạng thái của hạ tầng nó đang quản lý, sau đó cập nhật lại state cho giống với hạ tầng
+> Tiếp theo phải cập nhật lại code bằng tay.
+
+Cập nhật lại main.tf
+```
+...
+resource "aws_instance" "server" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+
+  vpc_security_group_ids = [
+    aws_security_group.allow_ssh.id,
+    "sg-0e768a8b30604fecb"
+  ]
+
+  lifecycle {
+    create_before_destroy = false
+  }
+
+  tags = {
+    Name  = "Server"
+  }
+}
+``` 
+
+## Terraform refresh only
+Giống với với câu lệnh refresh thì refresh only cũng sẽ đọc trạng thái của hạ tầng mà nó đang quản lý, nhưng thay vì cập nhật luôn Terraform state thì nó sẽ cho phép ta thấy resource nào sẽ thay đổi và ta có chấp nhận cập nhật lại state file không
+```
+terraform apply -refresh-only
+```
+
+# Terraform import
+Để quản lý một resource mà chưa có trong file code của Terraform , 
+- Khai báo cấu hình source code
+- Dùng lệnh *terraform import* để import resource vào state file
+
+Cập nhật main.tf thêm vào SG của sg-0e768a8b30604fecb
+```
+...
+
+resource "aws_security_group" "allow_http" {
+  name        = "allow-http"
+  description = "allow http"
+
+  ingress {
+    from_port = "80"
+    to_port   = "80"
+    protocol  = "tcp"
+    cidr_blocks = [
+      "0.0.0.0/0",
+    ]
+  }
+
+  tags = {
+    Name = "allow-http"
+  }
+}
+
+...
+```
+Chạy lệnh import
+```
+terraform import aws_security_group.allow_http sg-0e768a8b30604fecb
+```
+![](./images/tf-import.PNG)
+
+Chạy lệnh *teffarom apply* sẽ có 1 số thay đổi nhỏ
+![](./images/apply_after_import.PNG)
+
