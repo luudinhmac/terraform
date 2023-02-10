@@ -210,15 +210,19 @@ Tiếp theo ta sẽ đẩy module của ta lên trên mạng để mọi ngườ
 Đăng nhập github và tạo một repo ở trạng thái public, tên phải ở dạng format terraform-\<PROVIDER>-\<NAME>, sau đó copy 3 file ở folder vpc và đẩy lên github repo đó, ví dụ của mình tạo một repo tên là terraform-aws-vpc.
 ![](./images/git_hub_tf_module.PNG)
 
-Sau đó tạo tag version 
+> Sau đó tạo tag version 
 
 ![](./images/tag_version.PNG)
 
-Sau đó truy cập trang registry ở trên. Đăng nhập và chọn Publish > module
+> Sau đó truy cập trang registry ở trên. Đăng nhập và chọn Publish > module
 
 ![](./images/push_module.png)
 
-![](./images/push_module1.png)
+Sau khi chọn module thì tới trang tiếp theo ta chọn project đã tạo ở trên github
+
+![](./images/push_module1.PNG)
+
+Sau khi chọn xong và nhấn Publish 
 
 ![](./images/my_module.PNG)
 
