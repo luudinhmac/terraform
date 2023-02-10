@@ -24,27 +24,6 @@ resource "aws_vpc" "my_vpc" {
 #     vpc_id = aws_vpc.my_vpc.id
 #     cidr_block = "10.0.0.0/24"
 #     availability_zone = "us-east-2a"
-
-#     tags = {
-#       "Name" = "private_subnet"
-#     }
-# }
-
-# resource "aws_subnet" "private_subnet_2b" {
-#     vpc_id = aws_vpc.my_vpc.id
-#     cidr_block = "10.0.1.0/24"
-#     availability_zone = "us-east-2b"
-
-#     tags = {
-#       "Name" = "private_subnet"
-#     }
-# }
-
-# resource "aws_subnet" "private_subnet_2c" {
-#     vpc_id = aws_vpc.my_vpc.id
-#     cidr_block = "10.0.2.0/24"
-#     availability_zone = "us-east-2c"
-
 #     tags = {
 #       "Name" = "private_subnet"
 #     }
