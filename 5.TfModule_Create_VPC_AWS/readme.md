@@ -101,6 +101,7 @@ Vậy là các service trong public subnet có thể tương tác được với
 ## NAT Gateway
 Các private subnet không thể tương tác với bên ngoài, nhưng không gán IG vào nó được, trong khi ta chỉ muốn 1 chiều tương tác từ trong private subnet ra ngoài nhưng không muốn có chiều ngược lại. Và Nat gateway sẽ giúp làm việc này.
 ![](./images/nat_gw.PNG)
+
 Dùng resource aws_nat_gateway của Terraform để tạo NAT.
 ```
 ...
@@ -120,6 +121,7 @@ resource "aws_nat_gateway" "public" {
 }
 
 ```
+
 Tạo private route table và gán NAT vào nó
 ```
 ...
@@ -149,8 +151,6 @@ resource "aws_route_table_association" "public_private" {
 }
 ```
 
-
-
 # Terraform Module
 Terraform Module là một self-contained packages of code, cho phép gom code lại một chỗ và sử dụng ở nhiều chỗ khác nhau. Khi nói về module, ta có thể nghĩ nó như là một blocks nhỏ trong một sản phẩm lớn, ta sẽ gộp nhiều blocks nhỏ này lại với nhau để ra được sản phẩm cuối cùng, và blocks này có thể lấy để xây dựng sản phẩm khác cũng được.
 ## Standard Module structure
@@ -173,6 +173,7 @@ module <module_name> {
   input_two = <input_two>
 }
 ```
+
 \<source> có thể là dường dẫn local hoặc một url trên mạng, \<version> chỉ định version của module, \<input_one> là các giá trị input ta định nghĩa trong file variables.tf.
 ## Write modue
 Ví dụ ở trên, thì các giá trị động mà ta cần truyền vào module vpc của ta là:
@@ -208,11 +209,17 @@ Tiếp theo ta sẽ đẩy module của ta lên trên mạng để mọi ngườ
 
 Đăng nhập github và tạo một repo ở trạng thái public, tên phải ở dạng format terraform-\<PROVIDER>-\<NAME>, sau đó copy 3 file ở folder vpc và đẩy lên github repo đó, ví dụ của mình tạo một repo tên là terraform-aws-vpc.
 ![](./images/git_hub_tf_module.PNG)
+
 Sau đó tạo tag version 
+
 ![](./images/tag_version.PNG)
+
 Sau đó truy cập trang registry ở trên. Đăng nhập và chọn Publish > module
+
 ![](./images/push_module.png)
+
 ![](./images/push_module1.png)
+
 ![](./images/my_module.PNG)
 
 Phía bên phải có để cách làm sau để sử dụng module này. Giờ nếu ta muốn tạo VPC thì ta sẽ sử dụng module như sau.
